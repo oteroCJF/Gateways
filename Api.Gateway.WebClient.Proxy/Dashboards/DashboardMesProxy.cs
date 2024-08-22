@@ -42,7 +42,10 @@ namespace Api.Gateway.WebClient.Proxy.Dashboards
             {
                 dashboard = await GetDDetalleFumigacion(anio, servicios.Id, estatus, usuario);
             }
-
+            else if (servicios.Abreviacion.Equals("Agua"))
+            {
+                dashboard = await GetDDetalleAgua(anio, servicios.Id, estatus, usuario);
+            }
             return dashboard;
         }
         
@@ -83,6 +86,26 @@ namespace Api.Gateway.WebClient.Proxy.Dashboards
                 );
             }
             catch(HttpRequestException e)
+            {
+                return new List<CedulaDto>();
+            }
+        }
+        public async Task<List<CedulaDto>> GetDDetalleAgua(int anio, int servicio, int estatus, string usuario)
+        {
+            try
+            {
+                var request = await _httpClient.GetAsync($"{_apiGatewayUrl}agua/dashboard/detalle/{estatus}/{anio}/{servicio}/{usuario}");
+                request.EnsureSuccessStatusCode();
+
+                return JsonSerializer.Deserialize<List<CedulaDto>>(
+                    await request.Content.ReadAsStringAsync(),
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    }
+                );
+            }
+            catch (HttpRequestException e)
             {
                 return new List<CedulaDto>();
             }

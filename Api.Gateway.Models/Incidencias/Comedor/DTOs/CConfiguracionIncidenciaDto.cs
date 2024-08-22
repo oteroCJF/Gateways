@@ -29,5 +29,6 @@ namespace Api.Gateway.Models.Incidencias.Comedor.DTOs
         public bool Observaciones { get; set; }
         public string? RespuestaCedula { get; set; }
         public string? Ayuda { get; set; }
+        public bool FechaCorte { get; set; }
     }
 }

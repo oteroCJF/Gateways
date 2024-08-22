@@ -55,6 +55,10 @@ namespace Api.Gateway.WebClient.Proxy.Dashboards
                 {
                     dashboard.Add(await GetDashboardComedor(anio, sc.Id, usuario));
                 }
+                if (sc.Abreviacion.Equals("Agua"))
+                {
+                    dashboard.Add(await GetDashboardAgua(anio, sc.Id, usuario));
+                }
             }
 
             return dashboard;
@@ -139,6 +143,27 @@ namespace Api.Gateway.WebClient.Proxy.Dashboards
                 );
             }
             catch(HttpRequestException e)
+            {
+                return new DashboardDto();
+            }
+        }
+
+        public async Task<DashboardDto> GetDashboardAgua(int anio, int servicio, string usuario)
+        {
+            try
+            {
+                var request = await _httpClient.GetAsync($"{_apiGatewayUrl}agua/dashboard/index/{anio}/{servicio}/{usuario}");
+                request.EnsureSuccessStatusCode();
+
+                return JsonSerializer.Deserialize<DashboardDto>(
+                    await request.Content.ReadAsStringAsync(),
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    }
+                );
+            }
+            catch (HttpRequestException e)
             {
                 return new DashboardDto();
             }

@@ -41,26 +41,31 @@ namespace Api.Gateway.WebClient.Proxy.Dashboards
                 {
                     dashboard.Add(await GetDashboardMensajeria(anio, sc.Id, usuario));
                 }
-                
+
                 if (sc.Abreviacion.Equals("Fumigacion"))
                 {
                     dashboard.Add(await GetDashboardFumigacion(anio, sc.Id, usuario));
                 }
-                
+
                 if (sc.Abreviacion.Equals("Limpieza"))
                 {
                     dashboard.Add(await GetDashboardLimpieza(anio, sc.Id, usuario));
                 }
-                
+
                 if (sc.Abreviacion.Equals("Comedor"))
                 {
                     dashboard.Add(await GetDashboardComedor(anio, sc.Id, usuario));
+                }
+
+                if (sc.Abreviacion.Equals("Agua"))
+                {
+                    dashboard.Add(await GetDashboardAgua(anio, sc.Id, usuario));
                 }
             }
 
             return dashboard;
         }
-        
+
         public async Task<DFinancierosDto> GetDashboardMensajeria(int anio, int servicio, string usuario)
         {
             try
@@ -81,7 +86,7 @@ namespace Api.Gateway.WebClient.Proxy.Dashboards
                 return new DFinancierosDto();
             }
         }
-        
+
         public async Task<DFinancierosDto> GetDashboardFumigacion(int anio, int servicio, string usuario)
         {
             try
@@ -97,12 +102,12 @@ namespace Api.Gateway.WebClient.Proxy.Dashboards
                     }
                 );
             }
-            catch(HttpRequestException e)
+            catch (HttpRequestException e)
             {
                 return new DFinancierosDto();
             }
         }
-        
+
         public async Task<DFinancierosDto> GetDashboardLimpieza(int anio, int servicio, string usuario)
         {
             try
@@ -118,7 +123,7 @@ namespace Api.Gateway.WebClient.Proxy.Dashboards
                     }
                 );
             }
-            catch(HttpRequestException e)
+            catch (HttpRequestException e)
             {
                 return new DFinancierosDto();
             }
@@ -144,5 +149,26 @@ namespace Api.Gateway.WebClient.Proxy.Dashboards
                 return new DFinancierosDto();
             }
         }
+    
+    public async Task<DFinancierosDto> GetDashboardAgua(int anio, int servicio, string usuario)
+    {
+        try
+        {
+            var request = await _httpClient.GetAsync($"{_apiGatewayUrl}agua/dfinancieros/index/{anio}/{servicio}/{usuario}");
+            request.EnsureSuccessStatusCode();
+
+            return JsonSerializer.Deserialize<DFinancierosDto>(
+                await request.Content.ReadAsStringAsync(),
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                }
+            );
+        }
+        catch (HttpRequestException e)
+        {
+            return new DFinancierosDto();
+        }
     }
+}
 }

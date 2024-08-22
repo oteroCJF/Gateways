@@ -45,11 +45,18 @@ namespace Api.Gateway.WebClient.Proxy.Dashboards
             {
                 return await GetDetalleFL(anio, servicio.Id, usuario);
             }
-
+            else if (servicio.Abreviacion.Equals("Agua"))
+            {
+                return await GetDetalleFA(anio, servicio.Id, usuario);
+            }
+            else if (servicio.Abreviacion.Equals("Comedor"))
+            {
+                return await GetDetalleFC(anio, servicio.Id, usuario);
+            }
             return new List<DetalleServicioDto>();
         }
 
-        
+
         public async Task<List<DetalleServicioDto>> GetDetalleFM(int anio, int servicio, string usuario)
         {
             try
@@ -70,7 +77,7 @@ namespace Api.Gateway.WebClient.Proxy.Dashboards
                 return new List<DetalleServicioDto>();
             }
         }
-        
+
         public async Task<List<DetalleServicioDto>> GetDetalleFF(int anio, int servicio, string usuario)
         {
             try
@@ -86,12 +93,12 @@ namespace Api.Gateway.WebClient.Proxy.Dashboards
                     }
                 );
             }
-            catch(HttpRequestException e)
+            catch (HttpRequestException e)
             {
                 return new List<DetalleServicioDto>();
             }
         }
-        
+
         public async Task<List<DetalleServicioDto>> GetDetalleFL(int anio, int servicio, string usuario)
         {
             try
@@ -107,10 +114,54 @@ namespace Api.Gateway.WebClient.Proxy.Dashboards
                     }
                 );
             }
-            catch(HttpRequestException e)
+            catch (HttpRequestException e)
+            {
+                return new List<DetalleServicioDto>();
+            }
+        }
+
+        public async Task<List<DetalleServicioDto>> GetDetalleFA(int anio, int servicio, string usuario)
+        {
+            try
+            {
+                var request = await _httpClient.GetAsync($"{_apiGatewayUrl}agua/dfinancieros/detalle/{anio}/{servicio}/{usuario}");
+                request.EnsureSuccessStatusCode();
+
+                return JsonSerializer.Deserialize<List<DetalleServicioDto>>(
+                    await request.Content.ReadAsStringAsync(),
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    }
+                );
+            }
+            catch (HttpRequestException e)
+            {
+                return new List<DetalleServicioDto>();
+            }
+
+        }
+
+        public async Task<List<DetalleServicioDto>> GetDetalleFC(int anio, int servicio, string usuario)
+        {
+            try
+            {
+                var request = await _httpClient.GetAsync($"{_apiGatewayUrl}comedor/dfinancieros/detalle/{anio}/{servicio}/{usuario}");
+                request.EnsureSuccessStatusCode();
+
+                return JsonSerializer.Deserialize<List<DetalleServicioDto>>(
+                    await request.Content.ReadAsStringAsync(),
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    }
+                );
+            }
+            catch (HttpRequestException e)
             {
                 return new List<DetalleServicioDto>();
             }
         }
     }
 }
+
