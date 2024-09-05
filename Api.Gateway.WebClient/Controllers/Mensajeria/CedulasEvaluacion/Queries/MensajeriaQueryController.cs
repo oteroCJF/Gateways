@@ -103,7 +103,6 @@ namespace Api.Gateway.WebClient.Controllers.Mensajeria.CedulasEvaluacion.Queries
         }
 
 
-
         [Route("getCedulasByAnio/{servicio}/{anio}/{usuario}")]
         [HttpGet]
         public async Task<DataCollection<CedulaEvaluacionDto>> GetCedulasByAnio(int servicio, int anio, string usuario)

@@ -51,15 +51,21 @@ namespace Api.Gateway.WebClient.Controllers.Comedor.Entregables.Procedures.Queri
             return validada != null ? validada.Validado : false;
         }
 
+        //Metodo que valida si el Acta Entrega del COMEDOR está o no validada por el usuario
         public bool VerificaActaComedor(DataCollection<EntregableDto> entregables, List<CTEntregableDto> ctentregables, int cedula)
         {
-            var actaId = ctentregables.SingleOrDefault(ct => ct.Abreviacion.Equals("ActaERF")).Id;
+           
+            // Recupera el Id que corresponde al entregable "ActaER" de la BD CatalogoServicios en la tabla CTEntregables:
+            var actaId = ctentregables.SingleOrDefault(ct => ct.Abreviacion.Equals("ActaER")).Id;
 
+            //Va y busca en la tabla entregables el id correspondiente de la cedula y el entregable. 
             var acta = entregables.Items.SingleOrDefault(e => e.CedulaEvaluacionId == cedula && e.EntregableId == actaId && !e.FechaEliminacion.HasValue);
 
+            //Regresa un true si encuentra el Acta y si el atributo validado es true, false en caso contrario y regresa a CedulaQueryController
             return acta != null ? acta.Validado : false;
         }
 
+        //Metodo que valida si el Memorandum del COMEDOR está o no validado por el usuario
         public bool VerificaMemorandumComedor(DataCollection<EntregableDto> entregables, List<CTEntregableDto> ctentregables, int cedula)
         {
             var memorandumId = ctentregables.SingleOrDefault(ct => ct.Abreviacion.Equals("Memorandum")).Id;
