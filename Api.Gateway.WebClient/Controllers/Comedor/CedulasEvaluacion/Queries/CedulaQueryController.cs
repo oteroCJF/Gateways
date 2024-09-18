@@ -45,8 +45,10 @@ namespace Api.Gateway.WebClient.Controllers.Comedor.CedulasEvaluacion.Queries
         private readonly IInmuebleProxy _inmuebles;
         private readonly IUsuarioProxy _usuarios;
         private readonly ICTParametroProxy _parametros;
+
         private readonly IEstatusCedulaProxy _estatusCedula;
         private readonly IEstatusEntregableProxy _estatusEntregables;
+
         private readonly IQCuestionarioComedorProxy _cuestionarios;
         private readonly ICTEntregableProxy _ctEntregables;
         private readonly ICTIncidenciaProxy _ctIncidencias;

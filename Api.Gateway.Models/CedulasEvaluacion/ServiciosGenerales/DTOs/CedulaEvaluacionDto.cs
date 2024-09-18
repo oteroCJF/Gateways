@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace Api.Gateway.Models.CedulasEvaluacion.ServiciosGenerales.DTOs
 {

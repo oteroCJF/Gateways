@@ -11,5 +11,6 @@ namespace Api.Gateway.Models
         public int Total { get; set; }
         public int Page { get; set; }
         public int Pages { get; set; }
+
     }
 }

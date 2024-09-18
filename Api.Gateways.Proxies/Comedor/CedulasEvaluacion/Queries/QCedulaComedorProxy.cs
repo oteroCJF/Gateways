@@ -1,14 +1,11 @@
 ﻿using Api.Gateways.Proxies;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
-using System.Text;
 using System.Threading.Tasks;
 using Api.Gateway.Proxies.Config;
-using Api.Gateway.Models.CedulasEvaluacion.ServiciosGenerales.Commands.CedulasEvaluacion;
 using Api.Gateway.Models.CedulasEvaluacion.ServiciosGenerales.DTOs.Comedor;
 using Api.Gateway.Models;
 using Api.Gateway.Models.CedulasEvaluacion.ServiciosGenerales.DTOs;
@@ -19,6 +16,7 @@ namespace Api.Gateway.Proxies.Comedor.CedulasEvaluacion.Queries
     {
         Task<List<CedulaComedorDto>> GetAllCedulasAsync();
         Task<DataCollection<CedulaEvaluacionDto>> GetCedulaEvaluacionByAnio(int anio);
+        Task<DataCollection<CedulaEvaluacionDto>> GetCedulaEvaluacionByAnioMes(int anio, int mes, int contrato);
         Task<CedulaComedorDto> GetCedulaById(int cedula);
         Task<decimal> GetTotalPDAsync(int cedula);
     }
@@ -68,6 +66,20 @@ namespace Api.Gateway.Proxies.Comedor.CedulasEvaluacion.Queries
             {
                 return new DataCollection<CedulaEvaluacionDto>();
             }
+        }
+
+        public async Task<DataCollection<CedulaEvaluacionDto>> GetCedulaEvaluacionByAnioMes(int anio, int mes, int contrato)
+        {
+            var request = await _httpClient.GetAsync($"{_apiUrls.AguaUrl}api/comedor/cedulaEvaluacion/getCedulasByAnioMes/{anio}/{mes}/{contrato}");
+            request.EnsureSuccessStatusCode();
+
+            return JsonSerializer.Deserialize<DataCollection<CedulaEvaluacionDto>>(
+                await request.Content.ReadAsStringAsync(),
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                }
+            );
         }
 
         public async Task<CedulaComedorDto> GetCedulaById(int cedula)

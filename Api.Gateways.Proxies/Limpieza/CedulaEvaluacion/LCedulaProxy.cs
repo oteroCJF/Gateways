@@ -1,6 +1,5 @@
 ﻿using Api.Gateway.Models.CedulasEvaluacion.ServiciosGenerales.Commands.CedulasEvaluacion;
 using Api.Gateway.Models.CedulasEvaluacion.ServiciosGenerales.DTOs.Limpieza;
-using Api.Gateway.Models.CedulasEvaluacion.ServiciosGenerales.DTOs.Limpieza;
 using Api.Gateway.Proxies.Config;
 using Api.Gateways.Proxies;
 using Microsoft.AspNetCore.Http;

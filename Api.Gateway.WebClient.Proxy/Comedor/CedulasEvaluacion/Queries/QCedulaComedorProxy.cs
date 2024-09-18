@@ -18,7 +18,7 @@ namespace Api.Gateway.WebClient.Proxy.Comedor.CedulasEvaluacion.Queries
     public interface IQCedulaComedorProxy
     {
         Task<List<CedulaComedorDto>> GetAllCedulasEvaluacionAsync();
-        Task<CedulaComedorDto> GetCedulaByInmuebleAnioMesAsync(int inmueble, int anio, int mes);
+        Task<CedulaEvaluacionDto> GetCedulaByInmuebleAnioMesAsync(int inmueble, int anio, int mes);
         Task<DataCollection<CedulaEvaluacionDto>> GetCedulaByAnioAsync(int servicio, int anio, string usuario);
         Task<DataCollection<CedulaEvaluacionDto>> GetCedulaByAnioMes(int servicio, int anio, int mes, int contrato, string usuario);
         Task<CedulaComedorDto> GetCedulaById(int cedula);
@@ -95,12 +95,12 @@ namespace Api.Gateway.WebClient.Proxy.Comedor.CedulasEvaluacion.Queries
             }           
         }
 
-        public async Task<CedulaComedorDto> GetCedulaByInmuebleAnioMesAsync(int inmueble, int anio, int mes)
+        public async Task<CedulaEvaluacionDto> GetCedulaByInmuebleAnioMesAsync(int inmueble, int anio, int mes)
         {
             var request = await _httpClient.GetAsync($"{_apiGatewayUrl}comedor/cedulaEvaluacion/getCedulasByInmuebleAM/{inmueble}/{anio}/{mes}");
             request.EnsureSuccessStatusCode();
 
-            return JsonSerializer.Deserialize<CedulaComedorDto>(
+            return JsonSerializer.Deserialize<CedulaEvaluacionDto>(
                 await request.Content.ReadAsStringAsync(),
                 new JsonSerializerOptions
                 {
