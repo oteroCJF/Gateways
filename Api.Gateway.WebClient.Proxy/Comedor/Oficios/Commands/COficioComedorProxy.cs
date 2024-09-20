@@ -18,12 +18,8 @@ using System.Threading.Tasks;
 
 namespace Api.Gateway.WebClient.Proxy.Comedor.Oficios.Commands
 {
-    public interface ICOficioProxy
+    public interface ICOficioComedorProxy
     {
-        Task<List<OficioDto>> GetAllOficiosAsync();
-        Task<List<OficioDto>> GetOficiosByAnio(int anio);
-        Task<OficioDto> GetOficioById(int id);
-        Task<List<CFDIDto>> GetFacturasNCPendientes(int oficio);
         Task<OficioDto> CreateOficio([FromForm] OficioCreateCommand oficio);
         Task<List<DetalleOficioDto>> CreateDetalleOficio([FromBody] List<DetalleOficioCreateCommand> oficio);
         Task<DetalleOficioDto> DeleteDetalleOficio([FromBody] DetalleOficioDeleteCommand oficio);
@@ -33,7 +29,7 @@ namespace Api.Gateway.WebClient.Proxy.Comedor.Oficios.Commands
         Task<OficioDto> EDGPPTOficio([FromBody] EDGPPTOficioCommand oficio);
     }
 
-    public class COficioComedorProxy : ICOficioProxy
+    public class COficioComedorProxy : ICOficioComedorProxy
     {
         private readonly string _apiGatewayUrl;
         private readonly HttpClient _httpClient;
@@ -44,83 +40,6 @@ namespace Api.Gateway.WebClient.Proxy.Comedor.Oficios.Commands
 
             _httpClient = httpClient;
             _apiGatewayUrl = apiGatewayUrl.Value;
-        }
-
-        public async Task<List<OficioDto>> GetAllOficiosAsync()
-        {
-            try
-            {
-                var request = await _httpClient.GetAsync($"{_apiGatewayUrl}comedor/oficios");
-                request.EnsureSuccessStatusCode();
-
-                return JsonSerializer.Deserialize<List<OficioDto>>(
-                    await request.Content.ReadAsStringAsync(),
-                    new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    }
-                );
-            }
-            catch (HttpRequestException ex)
-            {
-                return new List<OficioDto>();
-            }
-        }
-
-        public async Task<List<OficioDto>> GetOficiosByAnio(int anio)
-        {
-            try
-            {
-                var request = await _httpClient.GetAsync($"{_apiGatewayUrl}comedor/oficios/getOficiosByAnio/{anio}");
-                request.EnsureSuccessStatusCode();
-
-                return JsonSerializer.Deserialize<List<OficioDto>>(
-                    await request.Content.ReadAsStringAsync(),
-                    new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    }
-                );
-            }
-            catch (HttpRequestException ex)
-            {
-                return new List<OficioDto>();
-            }
-        }
-
-        public async Task<OficioDto> GetOficioById(int id)
-        {
-            try
-            {
-                var request = await _httpClient.GetAsync($"{_apiGatewayUrl}comedor/oficios/getOficioById/{id}");
-                request.EnsureSuccessStatusCode();
-
-                return JsonSerializer.Deserialize<OficioDto>(
-                    await request.Content.ReadAsStringAsync(),
-                    new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    }
-                );
-            }
-            catch (HttpRequestException ex)
-            {
-                return new OficioDto();
-            }
-        }
-
-        public async Task<List<CFDIDto>> GetFacturasNCPendientes(int oficio)
-        {
-            var request = await _httpClient.GetAsync($"{_apiGatewayUrl}comedor/oficios/getFacturasNCPendientes/{oficio}");
-            request.EnsureSuccessStatusCode();
-
-            return JsonSerializer.Deserialize<List<CFDIDto>>(
-                await request.Content.ReadAsStringAsync(),
-                new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                }
-            );
         }
 
         public async Task<OficioDto> CreateOficio([FromForm] OficioCreateCommand oficio)

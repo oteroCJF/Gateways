@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace Api.Gateway.WebClient.Proxy.Comedor.Oficios.Queries
 {
-    public interface IQueriesOficiosProxy
+    public interface IQOficioComedorProxy
     {
         Task<List<OficioDto>> GetAllOficiosAsync();
         Task<List<OficioDto>> GetOficiosByAnio(int anio);
@@ -27,7 +27,7 @@ namespace Api.Gateway.WebClient.Proxy.Comedor.Oficios.Queries
 
     }
 
-    public class QOficioComedorProxy : IQueriesOficiosProxy
+    public class QOficioComedorProxy : IQOficioComedorProxy
     {
         private readonly string _apiGatewayUrl;
         private readonly HttpClient _httpClient;
@@ -109,35 +109,6 @@ namespace Api.Gateway.WebClient.Proxy.Comedor.Oficios.Queries
             request.EnsureSuccessStatusCode();
 
             return JsonSerializer.Deserialize<List<CFDIDto>>(
-                await request.Content.ReadAsStringAsync(),
-                new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                }
-            );
-        }
-
-        public async Task<OficioDto> CreateOficio([FromForm] OficioCreateCommand oficio)
-        {
-            var formContent = new MultipartFormDataContent();
-
-            formContent.Add(new StringContent(oficio.Anio.ToString()), "Anio");
-            formContent.Add(new StringContent(oficio.UsuarioId.ToString()), "UsuarioId");
-            formContent.Add(new StringContent(oficio.NumeroOficio.ToString()), "NumeroOficio");
-            formContent.Add(new StringContent(oficio.ContratoId.ToString()), "ContratoId");
-            formContent.Add(new StringContent(oficio.ServicioId.ToString()), "ServicioId");
-            formContent.Add(new StringContent(oficio.FechaTramitado.ToString()), "FechaTramitado");
-            if (oficio.Oficio != null)
-            {
-                var oficioContent = new StreamContent(oficio.Oficio.OpenReadStream());
-                oficioContent.Headers.ContentType = MediaTypeHeaderValue.Parse(oficio.Oficio.ContentType);
-                formContent.Add(oficioContent, name: "Oficio", oficio.Oficio.FileName);
-            }
-
-            var request = await _httpClient.PostAsync($"{_apiGatewayUrl}comedor/oficios/createOficio", formContent);
-            request.EnsureSuccessStatusCode();
-
-            return JsonSerializer.Deserialize<OficioDto>(
                 await request.Content.ReadAsStringAsync(),
                 new JsonSerializerOptions
                 {
