@@ -12,6 +12,8 @@ using Ionic.Zip;
 using Api.Gateway.Proxies.Fumigacion.CedulasEvaluacion;
 using Api.Gateway.Proxies.Limpieza.Entregables;
 using Api.Gateway.Proxies.Limpieza.CedulaEvaluacion;
+using System.Text;
+using System.Globalization;
 
 namespace Api.Gateway.WebClient.Procedures.ServiciosGenerales.Limpieza
 {
@@ -55,6 +57,15 @@ namespace Api.Gateway.WebClient.Procedures.ServiciosGenerales.Limpieza
 
                 var entregables = await GetEntregables(request);
 
+                static string NormalizarNombre(string nombre)
+                {
+                    // Remover caracteres especiales que puedan causar problemas
+                    var normalizedString = nombre.Normalize(NormalizationForm.FormD)
+                                                .Where(c => char.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                                                .ToArray();
+                    return new string(normalizedString); 
+                }
+
                 foreach (var en in entregables)
                 {
                     archivoO = request.Path;
@@ -65,8 +76,12 @@ namespace Api.Gateway.WebClient.Procedures.ServiciosGenerales.Limpieza
                     var inmueble = await _inmuebles.GetInmuebleById(cedula.InmuebleId);
                     var entregable = await _ctentregables.GetEntregableById(en.EntregableId);
 
+                    var nombreInmuebleNormalizado = NormalizarNombre(inmueble.Nombre); // Función para normalizar el nombre
+                    var nombreEntregableNormalizado = NormalizarNombre(entregable.Nombre);
+
                     archivoO = archivoO + "\\" + cedula.Anio + "\\" + mes.Nombre + "\\" + "\\" + cedula.Folio + "\\" + entregable.Nombre + "\\" + en.Archivo;
-                    archivoD = archivoD + "\\" + (i + "_Fumigacion_" + fecha + "_" + inmueble.Nombre + "_" + mes.Nombre + "_" + entregable.Nombre) + ".pdf";
+                    archivoD = archivoD + "\\" + (i + "_Limpieza_" + fecha + "_" + nombreInmuebleNormalizado + "_" + mes.Nombre + "_" + nombreEntregableNormalizado) + ".pdf";
+
 
                     var file = new FileInfo(archivoO);
                     var fileD = new FileInfo(archivoD);

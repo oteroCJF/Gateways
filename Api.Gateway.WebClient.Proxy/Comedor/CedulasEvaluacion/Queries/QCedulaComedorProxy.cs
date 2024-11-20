@@ -23,6 +23,9 @@ namespace Api.Gateway.WebClient.Proxy.Comedor.CedulasEvaluacion.Queries
         Task<DataCollection<CedulaEvaluacionDto>> GetCedulaByAnioMes(int servicio, int anio, int mes, int contrato, string usuario);
         Task<CedulaComedorDto> GetCedulaById(int cedula);
         Task<decimal> GetTotalPDAsync(int cedula);
+        Task<DataCollection<CedulaEvaluacionDto>> GetReportePAT(int anio, int mes);
+
+
     }
 
     public class QCedulaComedorProxy : IQCedulaComedorProxy
@@ -129,6 +132,20 @@ namespace Api.Gateway.WebClient.Proxy.Comedor.CedulasEvaluacion.Queries
             request.EnsureSuccessStatusCode();
 
             return JsonSerializer.Deserialize<decimal>(
+                await request.Content.ReadAsStringAsync(),
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                }
+            );
+        }
+
+        public async Task<DataCollection<CedulaEvaluacionDto>> GetReportePAT(int anio, int mes)
+        {
+            var request = await _httpClient.GetAsync($"{_apiGatewayUrl}comedor/cedulaEvaluacion/getReportePAT/{anio}/{mes}");
+            request.EnsureSuccessStatusCode();
+
+            return JsonSerializer.Deserialize<DataCollection<CedulaEvaluacionDto>>(
                 await request.Content.ReadAsStringAsync(),
                 new JsonSerializerOptions
                 {

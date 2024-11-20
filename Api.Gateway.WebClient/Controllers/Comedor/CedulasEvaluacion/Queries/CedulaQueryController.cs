@@ -67,6 +67,7 @@ namespace Api.Gateway.WebClient.Controllers.Comedor.CedulasEvaluacion.Queries
         private readonly ICedulaComedorProcedure _cedulaProcedure;
         private readonly ICuestionarioComedorProcedure _respuestasProcedure;
 
+
         public ComedorController(IMesProxy meses, IInmuebleProxy inmuebles, IUsuarioProxy usuarios, IEstatusCedulaProxy estatusCedula, 
                                  IEstatusEntregableProxy estatusEntregables, IQCuestionarioComedorProxy cuestionarios, ICTEntregableProxy ctEntregables, 
                                  ICTIncidenciaProxy ctIncidencias, ICTServicioContratoProxy ctSContratos, IQCedulaComedorProxy cedula, 
@@ -220,6 +221,33 @@ namespace Api.Gateway.WebClient.Controllers.Comedor.CedulasEvaluacion.Queries
         public async Task<decimal> GetTotalPDAsync(int cedula)
         {
             return await _cedula.GetTotalPDAsync(cedula);
+        }
+
+        [Route("getReportePAT/{anio}/{mes}")]
+        public async Task<DataCollection<CedulaEvaluacionDto>> GetReportePAT(int anio, int mes)
+        {
+            var inmuebles = await _inmuebles.GetAllInmueblesAsync();
+            var meses = await _meses.GetAllMesesAsync();
+            var contratos = await _contrato.GetAllContratosAsync();
+
+
+
+            var result = await _cedula.GetCedulaEvaluacionByAnio(anio);
+
+            var cedulas = result.Items.Where(c => c.MesId == mes).ToList();
+
+            result.Items = cedulas;
+
+            if (result.Items != null)
+            {
+                foreach (var ced in result.Items)
+                {
+                    ced.Mes = meses.Single(m => m.Id == ced.MesId).Nombre;
+                    ced.Inmueble = inmuebles.Single(i => i.Id == ced.InmuebleId).Nombre;
+                }
+            }
+
+            return result;
         }
     }
 }
