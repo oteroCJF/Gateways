@@ -17,15 +17,12 @@ namespace Api.Gateway.WebClient.Proxy.Comedor.Entregables.Commands
 {
     public interface ICEntregableComedorProxy
     {
-        Task<List<EntregableDto>> GetEntregablesByCedula(int cedula);
-        Task<List<EntregableEstatusDto>> GetEntregablesByEstatus(int estatus);
-        Task UpdateEntregable(EntregableCommandUpdate entregable);
-        Task AUpdateEntregable([FromForm] EEntregableUpdateCommand entregable);
-        Task<string> VisualizarEntregables(int anio, string mes, string folio, string archivo, string tipo);
 
+        Task UpdateEntregable(EntregableCommandUpdate entregable);        
+        Task ValidarEntregables([FromForm] EntregableCommandUpdate entregable);        
+        Task AUpdateEntregable([FromForm] EEntregableUpdateCommand entregable);
         Task<string> DescargarEntregables([FromBody] DEntregablesCommand command);
 
-        Task ValidarEntregables([FromForm] EntregableCommandUpdate entregable);
     }
 
     public class CEntregableComedorProxy : ICEntregableComedorProxy
@@ -39,34 +36,6 @@ namespace Api.Gateway.WebClient.Proxy.Comedor.Entregables.Commands
 
             _httpClient = httpClient;
             _apiGatewayUrl = apiGatewayUrl.Value;
-        }
-
-        public async Task<List<EntregableEstatusDto>> GetEntregablesByEstatus(int estatus)
-        {
-            var request = await _httpClient.GetAsync($"{_apiGatewayUrl}comedor/entregablesCedula/getEntregablesByEstatus/{estatus}");
-            request.EnsureSuccessStatusCode();
-
-            return JsonSerializer.Deserialize<List<EntregableEstatusDto>>(
-                await request.Content.ReadAsStringAsync(),
-                new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                }
-            );
-        }
-
-        public async Task<List<EntregableDto>> GetEntregablesByCedula(int cedula)
-        {
-            var request = await _httpClient.GetAsync($"{_apiGatewayUrl}comedor/entregablesCedula/getEntregablesByCedula/{cedula}");
-            request.EnsureSuccessStatusCode();
-
-            return JsonSerializer.Deserialize<List<EntregableDto>>(
-                await request.Content.ReadAsStringAsync(),
-                new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                }
-            );
         }
 
         public async Task UpdateEntregable(EntregableCommandUpdate entregable)
@@ -98,21 +67,7 @@ namespace Api.Gateway.WebClient.Proxy.Comedor.Entregables.Commands
             request.EnsureSuccessStatusCode();
         }
 
-        public async Task AUpdateEntregable([FromForm] EEntregableUpdateCommand entregable)
-        {
-            var formContent = new MultipartFormDataContent();
-
-            formContent.Add(new StringContent(entregable.Id.ToString()), "Id");
-            formContent.Add(new StringContent(entregable.UsuarioId.ToString()), "UsuarioId");
-            formContent.Add(new StringContent(entregable.CedulaEvaluacionId.ToString()), "CedulaEvaluacionId");
-            formContent.Add(new StringContent(entregable.EntregableId.ToString()), "EntregableId");
-            formContent.Add(new StringContent(entregable.Estatus.ToString()), "Estatus");
-            formContent.Add(new StringContent(entregable.Observaciones.ToString()), "Observaciones");
-
-            var request = await _httpClient.PutAsync($"{_apiGatewayUrl}comedor/entregablesCedula/AREntregable", formContent);
-            request.EnsureSuccessStatusCode();
-        }
-
+       
         public async Task ValidarEntregables(EntregableCommandUpdate entregable)
         {
             var formContent = new MultipartFormDataContent();
@@ -132,16 +87,20 @@ namespace Api.Gateway.WebClient.Proxy.Comedor.Entregables.Commands
             request.EnsureSuccessStatusCode();
         }
 
-        public async Task<string> VisualizarEntregables(int anio, string mes, string folio, string archivo, string tipo)
+         public async Task AUpdateEntregable([FromForm] EEntregableUpdateCommand entregable)
         {
-            var request = await _httpClient.GetAsync($"{_apiGatewayUrl}comedor/entregablesCedula/visualizarEntregable/{anio}/{mes}/{folio}/{archivo}/{tipo}");
+            var formContent = new MultipartFormDataContent();
+
+            formContent.Add(new StringContent(entregable.Id.ToString()), "Id");
+            formContent.Add(new StringContent(entregable.UsuarioId.ToString()), "UsuarioId");
+            formContent.Add(new StringContent(entregable.CedulaEvaluacionId.ToString()), "CedulaEvaluacionId");
+            formContent.Add(new StringContent(entregable.EntregableId.ToString()), "EntregableId");
+            formContent.Add(new StringContent(entregable.Estatus.ToString()), "Estatus");
+            formContent.Add(new StringContent(entregable.Observaciones.ToString()), "Observaciones");
+
+            var request = await _httpClient.PutAsync($"{_apiGatewayUrl}comedor/entregablesCedula/AREntregable", formContent);
             request.EnsureSuccessStatusCode();
-
-            var contents = await request.Content.ReadAsStringAsync();
-
-            return contents;
         }
-
         public async Task<string> DescargarEntregables([FromBody] DEntregablesCommand command)
         {
             var content = new StringContent(

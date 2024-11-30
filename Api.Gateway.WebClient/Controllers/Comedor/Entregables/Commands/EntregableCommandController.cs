@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Api.Gateway.Proxies.Comedor.Entregables.Commands;
 using Api.Gateway.Proxies.Comedor.Entregables.Queries;
 using Api.Gateway.Models.Entregables.ServiciosGenerales.Commands.Cedulas.Update;
+using Api.Gateway.WebClient.Controllers.Comedor.Entregables.Procedures.Queries;
 
 namespace Api.Gateway.WebClient.Controllers.Comedor.Entregables.Commands
 {
@@ -21,10 +22,10 @@ namespace Api.Gateway.WebClient.Controllers.Comedor.Entregables.Commands
         private readonly ICEntregableComedorProxy _entregablesc;
         private readonly IQEntregableComedorProxy _entregablesq;
         private readonly IEstatusEntregableProxy _estatus;
-        private readonly ICTEntregableProxy _centregable;
+        private readonly IQComedorEntregableProcedure _centregable;
 
-        public EntregableCommandController(ICEntregableComedorProxy entregablesc, IQEntregableComedorProxy entregablesq, IEstatusEntregableProxy estatus, 
-                                           ICTEntregableProxy centregable)
+        public EntregableCommandController(ICEntregableComedorProxy entregablesc, IQEntregableComedorProxy entregablesq, IEstatusEntregableProxy estatus,
+                                           IQComedorEntregableProcedure centregable)
         {
             _entregablesq = entregablesq;
             _entregablesc = entregablesc;
@@ -63,10 +64,9 @@ namespace Api.Gateway.WebClient.Controllers.Comedor.Entregables.Commands
         [HttpPost]
         public async Task<string> DescargarEntregables([FromBody] DEntregablesCommand request)
         {
-            //request.Path = await _entregablesq.GetPathEntregables();
-            //var entregables = await _pentregables.DescargarEntregables(request);
-
-            return null;
+            request.Path = await _entregablesq.GetPathEntregables();
+            var entregables = await _centregable.DescargarEntregables(request);
+            return entregables;
         }
 
         [HttpPut("validarEntregable")]

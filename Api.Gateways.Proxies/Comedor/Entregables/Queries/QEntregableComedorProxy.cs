@@ -104,7 +104,7 @@ namespace Api.Gateway.Proxies.Comedor.Entregables.Queries
 
         public async Task<string> GetPathEntregables()
         {
-            var request = await _httpClient.GetAsync($"{_apiUrls.MensajeriaUrl}api/comedor/entregables/getPathEntregables");
+            var request = await _httpClient.GetAsync($"{_apiUrls.ComedorUrl}api/comedor/entregables/getPathEntregables");
             request.EnsureSuccessStatusCode();
 
             var contents = await request.Content.ReadAsStringAsync();

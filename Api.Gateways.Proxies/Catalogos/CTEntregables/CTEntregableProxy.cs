@@ -20,6 +20,7 @@ namespace Api.Gateway.Proxies.Catalogos.CTEntregables
         Task<List<CTEntregableDto>> GetAllCTEntregables();
         Task<List<CTEntregableServicioDto>> GetEntregablesByServicio(int servicio);
         Task<CTEntregableDto> GetEntregableById(int entregable);
+
     }
 
     public class CTEntregableProxy : ICTEntregableProxy
@@ -76,5 +77,7 @@ namespace Api.Gateway.Proxies.Catalogos.CTEntregables
                 }
             );
         }
+
+
     }
 }

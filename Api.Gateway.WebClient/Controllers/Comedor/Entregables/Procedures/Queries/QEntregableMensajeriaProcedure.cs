@@ -13,6 +13,8 @@ using System.IO;
 using Ionic.Zip;
 using Api.Gateway.Proxies.Comedor.CedulasEvaluacion.Queries;
 using Api.Gateway.Proxies.Comedor.Entregables.Queries;
+using System.Text;
+using System.Globalization;
 
 namespace Api.Gateway.WebClient.Controllers.Comedor.Entregables.Procedures.Queries
 {
@@ -83,7 +85,7 @@ namespace Api.Gateway.WebClient.Controllers.Comedor.Entregables.Procedures.Queri
                 string archivoO = request.Path;
                 string archivoD = Directory.GetCurrentDirectory() + "\\Descargas";
 
-                string fecha = DateTime.Now.ToString("yyyy_MM_dd");
+                string fecha = DateTime.Now.ToString("dd-MM-yyyy");
 
                 if (!Directory.Exists(archivoD))
                 {
@@ -92,6 +94,14 @@ namespace Api.Gateway.WebClient.Controllers.Comedor.Entregables.Procedures.Queri
 
                 var entregables = await GetEntregables(request);
 
+                static string NormalizarNombre(string nombre)
+                {
+                    // Remover caracteres especiales que puedan causar problemas
+                    var normalizedString = nombre.Normalize(NormalizationForm.FormD)
+                                                .Where(c => char.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                                                .ToArray();
+                    return new string(normalizedString);
+                }
                 foreach (var en in entregables)
                 {
                     archivoO = request.Path;
@@ -102,8 +112,11 @@ namespace Api.Gateway.WebClient.Controllers.Comedor.Entregables.Procedures.Queri
                     var inmueble = await _inmuebles.GetInmuebleById(cedula.InmuebleId);
                     var entregable = await _ctentregables.GetEntregableById(en.EntregableId);
 
+                    var nombreInmuebleNormalizado = NormalizarNombre(inmueble.Nombre); // Función para normalizar el nombre
+                    var nombreEntregableNormalizado = NormalizarNombre(entregable.Nombre);
+
                     archivoO = archivoO + "\\" + cedula.Anio + "\\" + mes.Nombre + "\\" + "\\" + cedula.Folio + "\\" + entregable.Nombre + "\\" + en.Archivo;
-                    archivoD = archivoD + "\\" + i + "_Comedor_" + fecha + "_" + inmueble.Nombre + "_" + mes.Nombre + "_" + entregable.Nombre + ".pdf";
+                    archivoD = archivoD + "\\" + i + "_Comedor_" + nombreInmuebleNormalizado + "_" + mes.Nombre + "_" + cedula.Anio + "_" + nombreEntregableNormalizado + "_" + fecha + ".pdf";
 
                     var file = new FileInfo(archivoO);
                     var fileD = new FileInfo(archivoD);
