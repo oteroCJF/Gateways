@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="BMuebles\Firmantes\Commands\BFirmanteBMueblesProxy.cs" />
     <Compile Remove="Comedor\Oficios\Class1.cs" />
     <Compile Remove="Comedor\Oficios\COficioComCommands.cs" />
   </ItemGroup>

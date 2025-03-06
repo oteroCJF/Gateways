@@ -82,6 +82,7 @@ namespace Api.Gateway.Proxies.Mensajeria.Entregables
         public async Task<DataCollection<EntregableDto>> GetEntregablesValidados()
         {
             var request = await _httpClient.GetAsync($"{_apiUrls.MensajeriaUrl}api/mensajeria/entregables/getEntregablesValidados");
+
             request.EnsureSuccessStatusCode();
 
             return JsonSerializer.Deserialize<DataCollection<EntregableDto>>(

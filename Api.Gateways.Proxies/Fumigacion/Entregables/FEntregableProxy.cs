@@ -144,7 +144,7 @@ namespace Api.Gateway.Proxies.Fumigacion.Entregables
 
         public async Task<string> GetPathEntregables()
         {
-            var request = await _httpClient.GetAsync($"{_apiUrls.MensajeriaUrl}api/fumigacion/entregables/getPathEntregables");
+            var request = await _httpClient.GetAsync($"{_apiUrls.FumigacionUrl}api/fumigacion/entregables/getPathEntregables");
             request.EnsureSuccessStatusCode();
 
             var contents = await request.Content.ReadAsStringAsync();

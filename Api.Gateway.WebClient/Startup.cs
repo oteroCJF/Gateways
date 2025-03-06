@@ -16,6 +16,7 @@ using Api.Gateway.WebClient.Config.Microbiologicos;
 using Api.Gateway.WebClient.Config.Convencional;
 using Api.Gateway.WebClient.Config.Celular;
 using Api.Gateway.WebClient.Config.Agua;
+using Api.Gateway.WebClient.Config.BMuebles;
 
 namespace Api.Gateway.WebClient
 {
@@ -60,6 +61,11 @@ namespace Api.Gateway.WebClient
             
             services.AddAppsettingBinding(Configuration).AddProxiesAguaQueries(Configuration);
             services.AddAppsettingBinding(Configuration).AddProxiesAguaCommands(Configuration);
+
+            services.AddAppsettingBinding(Configuration).AddProxiesBMueblesQueries(Configuration);
+            services.AddAppsettingBinding(Configuration).AddProxiesBMueblesCommands(Configuration);
+
+
 
             services.AddControllers().AddJsonOptions(options => { 
                 options.JsonSerializerOptions.IgnoreNullValues = true; 
